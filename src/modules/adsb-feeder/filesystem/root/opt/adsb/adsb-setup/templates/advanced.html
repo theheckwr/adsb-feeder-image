@@ -1079,6 +1079,16 @@
                       value="{{ env_value_by_tag('ogn_gsm_center_freq') }}">
               </div>
               <div class="col-4 mb-1">
+                <label for="ogn_device_ppm">
+                  RTL-SDR PPM correction (0 = disabled)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_device_ppm" id="ogn_device_ppm"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_device_ppm') }}">
+              </div>
+              <div class="col-4 mb-1">
                 <label for="ogn_comment_antenna">
                   Antenna (beacon comment)
                 </label>
