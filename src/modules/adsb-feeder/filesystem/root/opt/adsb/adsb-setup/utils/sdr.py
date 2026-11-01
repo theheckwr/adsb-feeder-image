@@ -115,6 +115,7 @@ class SDRDevices:
             "hfdl",
             "ais",
             "sonde",
+            "ogn",
         ]
         for i in range(16):
             p.append(f"other-{i}")
@@ -370,6 +371,8 @@ class SDRDevices:
                 "hfdl": "hfdlgain",
                 "ais": "aisgain",
                 "sonde": "sondegain",
+                # OGN uses a fixed gain set inside the receiver configuration
+                "ogn": "",
             },
             # note -- the UI has to know where we don't support biastee
             "biastee": {
@@ -382,6 +385,7 @@ class SDRDevices:
                 "hfdl": "",
                 "ais": "aisbiastee",
                 "sonde": "sondebiastee",
+                "ogn": "ognbiastee",
             },
         }
         if purpose.startswith("other"):

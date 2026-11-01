@@ -1,0 +1,22 @@
+services:
+  rtlsdr-ogn:
+    image: ${OGN_CONTAINER}
+    container_name: rtlsdr-ogn
+    hostname: rtlsdr-ogn
+    restart: unless-stopped
+    networks:
+      - adsb_im_bridge
+    env_file:
+      # generated OGN configuration (KEY=value pairs consumed by the container's envsubst startup)
+      - /opt/adsb/ogn/config.vars
+    ports:
+      - ${AF_OGN_WEB_PORT:-8095}:8080 # OGN receiver web/status UI
+    healthcheck:
+      disable: true
+    device_cgroup_rules:
+      # USB devices (RTL-SDR)
+      - "c 189:* rwm"
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    # USER_PROVIDED_ENV_START
+    # USER_PROVIDED_ENV_END

@@ -1,0 +1,30 @@
+services:
+  ogn2dump1090:
+    image: ${OGN2DUMP1090_CONTAINER}
+    container_name: ogn2dump1090
+    hostname: ogn2dump1090
+    restart: unless-stopped
+    networks:
+      - adsb_im_bridge
+    depends_on:
+      - rtlsdr-ogn
+    healthcheck:
+      disable: true
+    environment:
+      # inject the decoded OGN traffic into readsb's SBS input port.
+      # 32006 is ultrafeeder's built-in, already published "SBS/Basestation protocol input":
+      # data arriving there shows up on the map but is never forwarded to the beast/raw
+      # outputs, so it cannot end up in your ADS-B aggregator feeds.
+      - SBS_DESTINATION_HOST=ultrafeeder
+      - SBS_DESTINATION_PORT=${OGN_SBS_IN_PORT:-32006}
+      # read decoded OGN beacons straight from the local rtlsdr-ogn decoder telnet port
+      - OGN_DECODE_TELNET_HOST=rtlsdr-ogn
+      - OGN_DECODE_TELNET_PORT=50001
+      # subscribe to the upstream OGN APRS stream within a radius around this station
+      - APRS_SUBSCRIBE_FILTER=r/${FEEDER_LAT}/${FEEDER_LONG}/${OGN_APRS_FILTER_RADIUS:-100}
+      # nearby METAR station used to convert GPS altitude to baro altitude
+      - METAR_SOURCE_ICAO=${OGN_METAR_ICAO:-}
+      - DRONEAWARE_UDP_PORT=None
+      - RESPECT_OGN_ADDRESS_TYPE=${OGN_RESPECT_ADDRESS_TYPE:-True}
+      # USER_PROVIDED_ENV_START
+      # USER_PROVIDED_ENV_END

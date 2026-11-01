@@ -90,6 +90,9 @@ services:
       - TAR1090_IMAGE_CONFIG_TEXT="ADS-B Feeder Image Configuration"
       - TAR1090_JAEROLABEL=ACARS
       - READSB_JAERO_TIMEOUT=37
+      # note: OGN traffic is injected into the existing SBS input port (32006) instead
+      # of a dedicated one - overriding READSB_NET_SBS_INPUT_PORT would replace the
+      # default 32006 listener (and the derived 32007/32008 ones) rather than add to it
       - GZIP_LVL=1 # minor CPU reduction from default of 3
       # options for the µImage:
       - TAR1090_ENABLE_AC_DB=${FEEDER_TAR1090_ENABLE_AC_DB}

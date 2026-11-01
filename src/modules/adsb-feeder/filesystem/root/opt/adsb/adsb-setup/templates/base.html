@@ -61,6 +61,9 @@
     <a class="btn btn-primary ms-0 me-1 mx-sm-1 nb-btn {% if not is_enabled('run_sonde') %}d-none{% endif %}"
       id="radiosonde-navbar-button"
       href="/radiosonde"><span class="icon-placeholder" data-icon="sonde"></span><span id="radiosonde-navbar-button-text">SONDE</span></a>
+    <a class="btn btn-primary ms-0 me-1 mx-sm-1 nb-btn {% if not is_enabled('run_ogn') %}d-none{% endif %}"
+      id="ogn-navbar-button"
+      href="/ogn/"><span class="icon-placeholder" data-icon="adsb"></span><span id="ogn-navbar-button-text">OGN</span></a>
     {% if is_enabled('temperature_block') %}
     <div id="cpu_temp_block" class="d-none ms-0 me-1 mx-sm-1" style="line-height:0.9em;font-size:0.7em">
       <span>CPU</span>

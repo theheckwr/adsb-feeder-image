@@ -147,6 +147,10 @@
         <button type="button" class="btn btn-large btn-primary w-100 with-checkbox" data-mdb-ripple-init><input type="checkbox" class="me-2" name="is_sonde_feeder"
                {% if is_enabled('is_sonde_feeder') %} checked {% endif %}> SONDE</button>
       </div>
+      <div class="col-12 col-md-6 col-lg-4 mt-2">
+        <button type="button" class="btn btn-large btn-primary w-100 with-checkbox" data-mdb-ripple-init><input type="checkbox" class="me-2" name="is_ogn_feeder"
+               {% if is_enabled('is_ogn_feeder') %} checked {% endif %}> OGN</button>
+      </div>
       <div class="col-12 col-md-6 col-lg-4 mt-2 d-none" id="initials_div">
         <label class="form-check-label" for="initials">Initials for non-ADS-B station names:
           <input type="text" class="initials_class" name="initials" id="initials" style="width: 6em;" placeholder="initials"

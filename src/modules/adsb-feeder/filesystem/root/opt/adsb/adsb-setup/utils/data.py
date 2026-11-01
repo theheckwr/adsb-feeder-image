@@ -99,6 +99,7 @@ class Data:
         ["/acarshub/", "ACARSHUB", "/"],
         ["/aiscatcher/", "AISCATCHER", "/"],
         ["/radiosonde/", "RADIOSONDE", "/"],
+        ["/ogn/", "OGN_WEB", "/"],
     ]
 
     @property
@@ -434,6 +435,7 @@ class Data:
         Env("_ADSBIM_IS_HFDL_FEEDER", default=False, tags=["is_hfdl_feeder", "is_enabled"]),
         Env("_ADSBIM_IS_AIS_FEEDER", default=False, tags=["is_ais_feeder", "is_enabled"]),
         Env("_ADSBIM_IS_SONDE_FEEDER", default=False, tags=["is_sonde_feeder", "is_enabled"]),
+        Env("_ADSBIM_IS_OGN_FEEDER", default=False, tags=["is_ogn_feeder", "is_enabled"]),
         # SDR settings are only valid on an integrated feeder or a micro feeder, not on stage2
         # sdrs_locked means the initial setup has been completed, don't change
         # SDR assignments unless requested explicitely by the user
@@ -1029,6 +1031,34 @@ class Data:
         Env("SONDE_SHARE_POSITION", default="False", tags=["sonde_share_position"]),
         Env("SONDE_WEB_CONTROL", default="False", tags=["sonde_web_control"]),
         Env("SONDE_WEB_PASSWORD", default="none", tags=["sonde_web_password"]),
+        # Open Glider Network (OGN) related stuff
+        Env("AF_IS_OGN_ENABLED", default=False, tags=["ogn", "is_enabled"]),
+        Env("AF_RUN_OGN", default=False, tags=["run_ogn", "is_enabled"]),
+        Env("OGN_SDR_TYPE", default="", tags=["ogn_sdr_type"]),
+        Env("OGN_SDR_SERIAL", default="", tags=["ognserial"]),
+        Env("OGN_SDR_PPM", default="0", tags=["ogn_device_ppm"]),
+        Env("OGN_SDR_BIASTEE", default=False, tags=["ognbiastee", "is_enabled"]),
+        Env("OGN_STATION_NAME", default="", tags=["ogn_station_name"]),
+        Env("OGN_FREQ_PLAN", default="0", tags=["ogn_freq_plan"]),
+        Env("OGN_GSM_CENTER_FREQ", default="0", tags=["ogn_gsm_center_freq"]),
+        Env("OGN_COMMENT_ANTENNA", default="", tags=["ogn_comment_antenna"]),
+        Env("OGN_COMMENT_FILTER", default="", tags=["ogn_comment_filter"]),
+        Env("OGN_COMMENT_AMPLIFIER", default="", tags=["ogn_comment_amplifier"]),
+        Env("OGN_COMMENT_DONGLE", default="", tags=["ogn_comment_dongle"]),
+        Env("OGN_COMMENT_CLUB", default="", tags=["ogn_comment_club"]),
+        Env("OGN_COMMENT_EMAIL", default="", tags=["ogn_comment_email"]),
+        Env("OGN_COMMENT_WEBSITE", default="", tags=["ogn_comment_website"]),
+        Env("OGN_COMMENT_NOTE", default="", tags=["ogn_comment_note"]),
+        Env("OGN_TOA_SERVER", default="", tags=["ogn_toa_server"]),
+        Env("OGN_MERGE_SERVER", default="", tags=["ogn_merge_server"]),
+        Env("OGN_APRS_FILTER_RADIUS", default="100", tags=["ogn_aprs_filter_radius"]),
+        Env("OGN_METAR_ICAO", default="", tags=["ogn_metar_icao"]),
+        Env("OGN_RESPECT_ADDRESS_TYPE", default="True", tags=["ogn_respect_address_type"]),
+        Env("OGN_ADSB_FEED_ENABLED", default=False, tags=["ogn_adsb_feed", "is_enabled"]),
+        Env("OGN_ADSB_MAX_ALT_FT", default="18000", tags=["ogn_adsb_max_alt_ft"]),
+        # ports used by the OGN receiver
+        Env("AF_OGN_WEB_PORT", default=8095, tags=["ognwebport", "norestore"]),
+        Env("OGN_SBS_IN_PORT", default=32006, tags=["ogn_sbs_in_port", "norestore"]),
         # Skystats related stuff
         Env("AF_IS_SKYSTATS_ENABLED", default=False, tags=["skystats", "is_enabled"]),
         Env("AF_IS_SKYSTATS_DB_ENABLED", default=False, tags=["skystats_db", "is_enabled"]),

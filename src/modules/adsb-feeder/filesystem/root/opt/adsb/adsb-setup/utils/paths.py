@@ -211,6 +211,23 @@ class PathConfig:
     def RADIOSONDE_STATION_BACKUP(self) -> Path:
         return self.ADSB_BASE_DIR / "radiosonde" / "station.cfg.bak"
 
+    # Open Glider Network (OGN) paths
+    @property
+    def OGN_DIR(self) -> Path:
+        return self.ADSB_BASE_DIR / "ogn"
+
+    @property
+    def OGN_CONFIG_TEMPLATE(self) -> Path:
+        return self.OGN_DIR / "config.vars.template"
+
+    @property
+    def OGN_CONFIG(self) -> Path:
+        return self.OGN_DIR / "config.vars"
+
+    @property
+    def OGN_CONFIG_BACKUP(self) -> Path:
+        return self.OGN_DIR / "config.vars.bak"
+
     # Temperature monitoring
     @property
     def ADSB_TEMPERATURE_DEFAULT(self) -> Path:

@@ -133,6 +133,7 @@
             {% if is_enabled('dumphfdl') %}<label class="mx-1"><input id="usagehfdl" type="radio" name="usage" value="hfdl"> HFDL</label>{% endif %}
             {% if is_enabled('shipfeeder') %}<label class="mx-1"><input id="usageais" type="radio" name="usage" value="ais"> AIS</label>{% endif %}
             {% if is_enabled('sonde') %}<label class="mx-1"><input id="usagesonde" type="radio" name="usage" value="sonde"> Sonde</label>{% endif %}
+            {% if is_enabled('ogn') %}<label class="mx-1"><input id="usageogn" type="radio" name="usage" value="ogn"> OGN</label>{% endif %}
             <label class="mx-1"><input id="usageother" type="radio" name="usage" value="other"> Other</label>
           </div>
           <div class="col-12" id="gain_container">
@@ -170,6 +171,7 @@
       {% if is_enabled('dumphfdl') %}, "hfdl"{% endif %}
       {% if is_enabled('shipfeeder') %}, "ais"{% endif %}
       {% if is_enabled('sonde') %}, "sonde"{% endif %}
+      {% if is_enabled('ogn') %}, "ogn"{% endif %}
     ];
 
   // slightly unintuitive - while we save data back to the data structures in the close function
@@ -339,6 +341,10 @@
     },
     'sonde': {
       'rtlsdr': ['enter a value between 0 and 50 or "auto"', validate_0_50_auto],
+    },
+    'ogn': {
+      // the OGN receiver uses a fixed gain - there is nothing to configure here
+      'rtlsdr': ['gain is fixed for OGN - leave empty', validate_empty],
     }
   }
   function update_gain_text(sdr_given) {
@@ -360,6 +366,7 @@
     show_biastee |= purpose == 'acars' && ['rtlsdr', 'airspy'].includes(sdr['type']);
     show_biastee |= purpose == 'acars_2' && ['rtlsdr', 'airspy'].includes(sdr['type']);
     show_biastee |= purpose == '1090' || purpose == '1090_2' || purpose == '978' || purpose == 'sonde';
+    show_biastee |= purpose == 'ogn';
     console.log(`update_biastee: ${show_biastee} for purpose: ${purpose}, type: ${sdr['type']}`);
     if (show_biastee) {
       $("#biastee_container").show();
@@ -387,6 +394,8 @@
       // only an RTLSDR supports 978 or Sonde
       $("#usage978").parent().toggle(sdr['type'] == "rtlsdr");
       $("#usagesonde").parent().toggle(sdr['type'] == "rtlsdr");
+      // OGN (rtlsdr-ogn) only supports RTL-SDR
+      $("#usageogn").parent().toggle(sdr['type'] == "rtlsdr");
       // Airspy devices aren't supported for VDL
       $("#usagevdl2").parent().toggle(!sdr['type'].startsWith("airspy"));
       // all the other containers support all SDRs (that can't be right?)

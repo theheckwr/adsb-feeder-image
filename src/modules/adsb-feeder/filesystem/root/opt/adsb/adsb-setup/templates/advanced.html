@@ -1019,6 +1019,156 @@
               {% endif %}
             </div>
           </div>
+
+          <div class="col-12 col-lg-6 mt-2">
+            <div class="row border my-2">
+              {% if not is_enabled('ogn') %}
+              <div class="col-8 my-1">
+                <label for="ogn--enable">
+                  Enable Open Glider Network (OGN)
+                </label>
+              </div>
+              <div class="col-4 my-1">
+                <button type="submit" class="btn btn-primary mx-auto w-100" name="ogn--enable"
+                        value="go">Enable</button>
+              </div>
+              {% else %}
+              <div class="col-6 my-1">
+                <label for="ogn--disable">
+                  Open Glider Network (OGN)
+                </label>
+              </div>
+              <div class="col-3 my-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn--disable"
+                        formnovalidate value="go">Disable</button>
+              </div>
+              <div class="col-3 my-1">
+                <button type="submit" class="btn btn-primary mx-auto w-100" name="ogn--update"
+                        value="go">Apply</button>
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_station_name">
+                  OGN station name (max. 9 characters)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_station_name" id="ogn_station_name"
+                      submit_button="ogn--update" maxlength="9"
+                      {% if is_enabled('ogn') %} required {% endif %}
+                      placeholder="receiver callsign"
+                      value="{{ env_value_by_tag('ogn_station_name') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_freq_plan">
+                  OGN frequency plan (0 = automatic)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_freq_plan" id="ogn_freq_plan"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_freq_plan') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_gsm_center_freq">
+                  Nearest GSM900 frequency [MHz] (0 = disabled)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_gsm_center_freq" id="ogn_gsm_center_freq"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_gsm_center_freq') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_comment_antenna">
+                  Antenna (beacon comment)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_comment_antenna" id="ogn_comment_antenna"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_comment_antenna') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_comment_dongle">
+                  SDR dongle (beacon comment)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_comment_dongle" id="ogn_comment_dongle"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_comment_dongle') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_aprs_filter_radius">
+                  Show OGN traffic within radius [km]
+                  <br><small>keep this at or below your max range (default 300&nbsp;km)</small>
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_aprs_filter_radius" id="ogn_aprs_filter_radius"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_aprs_filter_radius') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_metar_icao">
+                  Nearby METAR ICAO (for altitude conversion)
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_metar_icao" id="ogn_metar_icao"
+                      submit_button="ogn--update" maxlength="4"
+                      placeholder="e.g. EDDF"
+                      value="{{ env_value_by_tag('ogn_metar_icao') }}">
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_adsb_feed--enable">
+                  Share ADS-B traffic with OGN
+                </label>
+              </div>
+              {% if not is_enabled('ogn_adsb_feed') %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_adsb_feed--enable"
+                        formnovalidate value="go">Enable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-warning text-dark w-100 d-block text-center">off</span>
+              </div>
+              <div class="col-12 mb-1 text-muted">
+                <p>Off by default: turn this on only if you want to share your locally received 1090&nbsp;MHz
+                  ADS-B aircraft data with the public Open Glider Network.</p>
+              </div>
+              {% else %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_adsb_feed--disable"
+                        formnovalidate value="go">Disable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-success w-100 d-block text-center">on</span>
+              </div>
+              <div class="col-12 mb-1 text-warning">
+                <p><strong>Warning:</strong> enabling this shares your locally received 1090&nbsp;MHz ADS-B
+                  aircraft data with the public Open Glider Network. Only enable this if you are comfortable
+                  contributing your ADS-B feed.</p>
+              </div>
+              <div class="col-4 mb-1">
+                <label for="ogn_adsb_max_alt_ft">
+                  Max ADS-B altitude to share [ft]
+                </label>
+              </div>
+              <div class="col-8 mb-1">
+                <input type="text" class="mx-auto w-100" name="ogn_adsb_max_alt_ft" id="ogn_adsb_max_alt_ft"
+                      submit_button="ogn--update"
+                      value="{{ env_value_by_tag('ogn_adsb_max_alt_ft') }}">
+              </div>
+              {% endif %}
+              {% if env_value_by_tag('ognserial') == '' %}
+              <div class="col-12 mb-1 text-warning">
+                <p>No SDR is assigned for OGN - you can change that on the <a href="/sdr_setup">SDR Setup</a> page.</p>
+              </div>
+              {% endif %}
+              {% endif %}
+            </div>
+          </div>
         </div>
       </form>
     </div>

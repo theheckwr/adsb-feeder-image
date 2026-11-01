@@ -685,6 +685,8 @@ class AdsbIm:
             self._d.env_by_tags("is_ais_feeder").value = self._d.is_enabled("shipfeeder")
         if not self._d.is_enabled("is_sonde_feeder"):
             self._d.env_by_tags("is_sonde_feeder").value = self._d.is_enabled("sonde")
+        if not self._d.is_enabled("is_ogn_feeder"):
+            self._d.env_by_tags("is_ogn_feeder").value = self._d.is_enabled("ogn")
         # fmt: on
 
         print_err("startup: run handle_implied_settings()")
@@ -2520,6 +2522,81 @@ class AdsbIm:
                         print_err(f"radiosonde: config / station.cfg has changed, restarting container")
                         success, output = run_shell_captured(f"docker restart radiosonde")
 
+    def update_ogn_config(self):
+        # is this enabled and configured?
+        if (
+            self._d.is_enabled("ogn")
+            and self._d.env_by_tags("ognserial").value
+            and self._d.env_by_tags("ogn_sdr_type").value
+        ):
+            config_template = pathlib.Path(f"{get_adsb_base_dir()}/ogn/config.vars.template")
+            config_lines = config_template.read_text().splitlines()
+            if "%LOCAL_EDITS_DONT_MANAGE%=1" in config_lines:
+                # the user told us not to mess with their changes
+                print_err("user requested not to manage OGN config")
+                return
+            placeholders = [
+                "ognserial",
+                "ogn_device_ppm",
+                "ognbiastee",
+                "ogn_station_name",
+                "ogn_freq_plan",
+                "ogn_gsm_center_freq",
+                "ogn_comment_antenna",
+                "ogn_comment_filter",
+                "ogn_comment_amplifier",
+                "ogn_comment_dongle",
+                "ogn_comment_club",
+                "ogn_comment_email",
+                "ogn_comment_website",
+                "ogn_comment_note",
+                "ogn_toa_server",
+                "ogn_merge_server",
+                "ogn_adsb_max_alt_ft",
+            ]
+            for p in placeholders:
+                value = self._d.env_by_tags(p).value
+                config_lines = [line.replace("%" + p + "%", str(value)) for line in config_lines]
+            # the ADS-B feed address is derived: point at readsb's raw/AVR output when enabled
+            adsb_avr = "ultrafeeder:30002" if self._d.is_enabled("ogn_adsb_feed") else ""
+            config_lines = [line.replace("%ogn_adsb_avr%", adsb_avr) for line in config_lines]
+            placeholders = [
+                "lat",
+                "lon",
+                "alt",
+            ]
+            for p in placeholders:
+                config_lines = [line.replace("%" + p + "%", str(self._d.env_by_tags(p).list_get(0))) for line in config_lines]
+
+            new_config = "\n".join(config_lines)
+
+            config = pathlib.Path(f"{get_adsb_base_dir()}/ogn/config.vars")
+            config_backup = pathlib.Path(f"{get_adsb_base_dir()}/ogn/config.vars.bak")
+            config.parent.mkdir(parents=True, exist_ok=True)
+
+            if config.exists():
+                try:
+                    config.rename(config_backup)
+                except Exception:
+                    # if config.vars doesn't exist when compose up is called, docker will create
+                    # a directory named config.vars which needs to be removed for us to be able to
+                    # proceed
+                    try:
+                        config.rmdir()
+                    except Exception:
+                        pass
+
+            with open(config, "w") as f:
+                f.write(new_config)
+            config.chmod(0o644)
+
+            if config_backup.exists():
+                with open(config_backup, "r") as f:
+                    old_config = f.read()
+                    if old_config != new_config:
+                        print_err(f"ogn: config / config.vars has changed, restarting container")
+                        success, output = run_shell_captured(f"docker restart rtlsdr-ogn")
+
     def adjust_airspy_gain(self, gain):
         if gain.startswith("auto"):
             return "auto"
@@ -2764,6 +2841,8 @@ class AdsbIm:
         # already propagagted
         if self._d.is_enabled("is_sonde_feeder"):
             self._d.env_by_tags("sonde").value = True
+        if self._d.is_enabled("is_ogn_feeder"):
+            self._d.env_by_tags("ogn").value = True
         if self._d.is_enabled("is_ais_feeder"):
             self._d.env_by_tags("shipfeeder").value = True
 
@@ -3249,6 +3328,19 @@ class AdsbIm:
         else:
             sonde_sdr_type = ""
             self._d.env_by_tags("run_sonde").value = False
+        ognserial = self._d.env_by_tags("ognserial").valuestr
+        ognsdr = self._sdrdevices.get_sdr_by_serial(ognserial)
+        if ognsdr != self._sdrdevices.null_sdr:
+            ognsdr.purpose = "ogn"
+            ogn_sdr_type = ognsdr._type
+            self._d.env_by_tags("run_ogn").value = self._d.is_enabled(["ogn"])
+            if self._d.is_enabled("run_ogn") and self._d.env_by_tags("ogn_station_name").value == "":
+                self._d.env_by_tags("ogn_station_name").value = (
+                    f"{self._d.env_by_tags('initials').list_get(0)}-{self._d.env_by_tags('closest_airport').list_get(0)}"
+                )[:9]
+        else:
+            ogn_sdr_type = ""
+            self._d.env_by_tags("run_ogn").value = False
         aisserial = self._d.env_by_tags("aisserial").valuestr
         if self._d.is_enabled(["shipfeeder"]):
             aissdr = self._sdrdevices.get_sdr_by_serial(aisserial)
@@ -3326,6 +3418,7 @@ class AdsbIm:
         self._d.env_by_tags("vdl2devicesettings").value = vdl2devicesettings
         self._d.env_by_tags("hfdl_sdr_string").value = hfdlstring
         self._d.env_by_tags("sonde_sdr_type").value = sonde_sdr_type.upper()
+        self._d.env_by_tags("ogn_sdr_type").value = ogn_sdr_type.upper()
 
         # sort out if we need the acars_router and acarshub
         self._d.env_by_tags("acars_router").value = (
@@ -3416,6 +3509,7 @@ class AdsbIm:
         # sadly, that's configured through an annoying yml config file
         # we're trying to be clever and edit this from a template
         self.update_sonde_config()
+        self.update_ogn_config()
 
         if verbose:
             print_err(f"ACARS container {self._d.is_enabled(['run_acarsdec'])}")
@@ -3518,6 +3612,7 @@ class AdsbIm:
             ("hfdl", "dumphfdl"),
             ("ais", "shipfeeder"),
             ("sonde", "sonde"),
+            ("ogn", "ogn"),
         }
         for purpose, tag in purpose_pairs:
             if self._d.is_enabled([tag]):
@@ -3811,6 +3906,8 @@ class AdsbIm:
                             self._d.env_by_tags("is_ais_feeder").value = False
                         if key.startswith("sonde"):
                             self._d.env_by_tags("is_sonde_feeder").value = False
+                        if key == "ogn--disable":
+                            self._d.env_by_tags("is_ogn_feeder").value = False
 
                         continue
                 if key.endswith("--enable") and value == "go":
@@ -3829,6 +3926,8 @@ class AdsbIm:
                             self._d.env_by_tags("is_ais_feeder").value = True
                         if key.startswith("sonde"):
                             self._d.env_by_tags("is_sonde_feeder").value = True
+                        if key == "ogn--enable":
+                            self._d.env_by_tags("is_ogn_feeder").value = True
                         continue
                 if key.endswith("--update") and value == "go":
                     self._next_url_from_director = request.url
