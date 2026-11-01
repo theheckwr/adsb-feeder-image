@@ -1121,6 +1121,64 @@
                       value="{{ env_value_by_tag('ogn_metar_icao') }}">
               </div>
               <div class="col-4 mb-1">
+                <label for="ogn_local_reception--enable">
+                  Local OGN reception (868&nbsp;MHz decoder)
+                </label>
+              </div>
+              {% if not is_enabled('ogn_local_reception') %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_local_reception--enable"
+                        formnovalidate value="go">Enable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-warning text-dark w-100 d-block text-center">off</span>
+              </div>
+              <div class="col-12 mb-1 text-muted">
+                <p>Off: locally decoded gliders from this station's 868&nbsp;MHz receiver will not be shown.</p>
+              </div>
+              {% else %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_local_reception--disable"
+                        formnovalidate value="go">Disable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-success w-100 d-block text-center">on</span>
+              </div>
+              <div class="col-12 mb-1 text-muted">
+                <p>Gliders decoded by this station's 868&nbsp;MHz receiver are shown on the local map.</p>
+              </div>
+              {% endif %}
+              <div class="col-4 mb-1">
+                <label for="ogn_upstream_reception--enable">
+                  Upstream OGN reception (aprs.glidernet.org)
+                </label>
+              </div>
+              {% if not is_enabled('ogn_upstream_reception') %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_upstream_reception--enable"
+                        formnovalidate value="go">Enable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-warning text-dark w-100 d-block text-center">off</span>
+              </div>
+              <div class="col-12 mb-1 text-muted">
+                <p>Off by default: subscribe to the public OGN APRS stream to also show remote gliders
+                  beyond the radius of this station's receiver.</p>
+              </div>
+              {% else %}
+              <div class="col-4 mb-1">
+                <button type="submit" class="btn btn-secondary mx-auto w-100" name="ogn_upstream_reception--disable"
+                        formnovalidate value="go">Disable</button>
+              </div>
+              <div class="col-4 mb-1">
+                <span class="badge bg-success w-100 d-block text-center">on</span>
+              </div>
+              <div class="col-12 mb-1 text-muted">
+                <p>Remote gliders from the public OGN network are also shown on the local map
+                  (radius is set below).</p>
+              </div>
+              {% endif %}
+              <div class="col-4 mb-1">
                 <label for="ogn_adsb_feed--enable">
                   Share ADS-B traffic with OGN
                 </label>

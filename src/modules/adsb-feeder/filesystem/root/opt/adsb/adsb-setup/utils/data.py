@@ -1056,6 +1056,10 @@ class Data:
         Env("OGN_RESPECT_ADDRESS_TYPE", default="True", tags=["ogn_respect_address_type"]),
         Env("OGN_ADSB_FEED_ENABLED", default=False, tags=["ogn_adsb_feed", "is_enabled"]),
         Env("OGN_ADSB_MAX_ALT_FT", default="18000", tags=["ogn_adsb_max_alt_ft"]),
+        # the two independent data sources that ogn2dump1090 can pull from:
+        # local 868 MHz decoder (rtlsdr-ogn telnet) and the upstream OGN APRS stream
+        Env("OGN_LOCAL_RECEPTION", default=True, tags=["ogn_local_reception", "is_enabled"]),
+        Env("OGN_UPSTREAM_RECEPTION", default=False, tags=["ogn_upstream_reception", "is_enabled"]),
         # ports used by the OGN receiver
         Env("AF_OGN_WEB_PORT", default=8095, tags=["ognwebport", "norestore"]),
         Env("OGN_SBS_IN_PORT", default=32006, tags=["ogn_sbs_in_port", "norestore"]),

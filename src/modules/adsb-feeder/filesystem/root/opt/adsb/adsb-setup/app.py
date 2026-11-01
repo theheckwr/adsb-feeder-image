@@ -3683,6 +3683,24 @@ class AdsbIm:
         # in the HTML, every input field needs to have a name that is concatenated by "--"
         # and that matches the tags of one Env
         form: Dict = request.form
+        # the feeder checkboxes on the setup (datasharing) page are only sent
+        # when they are checked; they have no "--" suffix, so the generic
+        # handler below will set them to True when present, but nothing ever
+        # sets them to False. Sync each flag (and the service it controls)
+        # with the checkbox state here, before the generic handler runs.
+        # "initials" is present on both pages, but "aggregator_choice" only
+        # exists on the setup page, which identifies it even when every
+        # feeder checkbox is unchecked
+        setup_form = "initials" in form and "aggregator_choice" in form
+        if setup_form:
+            for flag, service in (
+                ("is_ais_feeder", "shipfeeder"),
+                ("is_sonde_feeder", "sonde"),
+                ("is_ogn_feeder", "ogn"),
+            ):
+                checked = flag in form
+                self._d.env_by_tags(flag).value = checked
+                self._d.env_by_tags(service).value = checked
         seen_go = False
         next_url = None
         for key, value in form.items():

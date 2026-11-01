@@ -20,6 +20,9 @@ services:
       # read decoded OGN beacons straight from the local rtlsdr-ogn decoder telnet port
       - OGN_DECODE_TELNET_HOST=rtlsdr-ogn
       - OGN_DECODE_TELNET_PORT=50001
+      # independent reception toggles: local 868 MHz decoder vs. upstream OGN APRS stream
+      - OGN_LOCAL_RECEPTION=${OGN_LOCAL_RECEPTION:-True}
+      - OGN_UPSTREAM_RECEPTION=${OGN_UPSTREAM_RECEPTION:-False}
       # subscribe to the upstream OGN APRS stream within a radius around this station
       - APRS_SUBSCRIBE_FILTER=r/${FEEDER_LAT}/${FEEDER_LONG}/${OGN_APRS_FILTER_RADIUS:-100}
       # nearby METAR station used to convert GPS altitude to baro altitude
